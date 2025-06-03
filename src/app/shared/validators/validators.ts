@@ -2,7 +2,7 @@ import { AbstractControl, AsyncValidatorFn, ValidationErrors, ValidatorFn } from
 import { Observable, of, timer } from 'rxjs'
 import { catchError, map, switchMap } from 'rxjs/operators'
 
-import { UsernameService } from '../services/username.service'
+import { UserService } from '../services/user.service'
 
 export function noFutureDateValidator(): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -22,13 +22,13 @@ export function validCountryValidator(allowedCountries: string[]): ValidatorFn {
   }
 }
 
-export function usernameAvailableValidator(usernameService: UsernameService): AsyncValidatorFn {
+export function usernameAvailableValidator(userService: UserService): AsyncValidatorFn {
   return (control: AbstractControl): Observable<ValidationErrors | null> => {
     if (!control.value) {
       return of(null)
     }
     return timer(300).pipe(
-      switchMap(() => usernameService.checkUsername(control.value)),
+      switchMap(() => userService.checkUsername(control.value)),
       map(({ isAvailable }) => (isAvailable ? null : { notAvailable: true })),
       catchError(() => of(null)),
     )

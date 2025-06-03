@@ -1,12 +1,12 @@
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal, WritableSignal } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { FormControl, FormGroup, Validators } from '@angular/forms'
-import { interval, takeWhile, tap } from 'rxjs'
+import { finalize, interval, takeWhile, tap } from 'rxjs'
 
 import { MAX_FORMS, SUBMIT_TIMER_SECONDS } from '../../shared/consts/consts'
 import { Country } from '../../shared/enum/country'
-import { FormModel } from '../../shared/interface/form.model'
-import { UsernameService } from '../../shared/services/username.service'
+import { FormModel, FormValueModel } from '../../shared/interface/form.model'
+import { UserService } from '../../shared/services/user.service'
 import {
   noFutureDateValidator,
   usernameAvailableValidator,
@@ -14,7 +14,7 @@ import {
 } from '../../shared/validators/validators'
 import { FormCardComponent } from '../form-card/form-card.component'
 
-function createForm(usernameService: UsernameService): FormGroup<FormModel> {
+function createForm(userService: UserService): FormGroup<FormModel> {
   return new FormGroup<FormModel>({
     country: new FormControl('', {
       nonNullable: true,
@@ -23,7 +23,7 @@ function createForm(usernameService: UsernameService): FormGroup<FormModel> {
     username: new FormControl('', {
       nonNullable: true,
       validators: [Validators.required],
-      asyncValidators: [usernameAvailableValidator(usernameService)],
+      asyncValidators: [usernameAvailableValidator(userService)],
     }),
     birthday: new FormControl('', {
       nonNullable: true,
@@ -41,11 +41,11 @@ function createForm(usernameService: UsernameService): FormGroup<FormModel> {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormArrayComponent {
-  private readonly usernameService: UsernameService = inject(UsernameService)
+  private readonly userService: UserService = inject(UserService)
   private readonly destroyRef: DestroyRef = inject(DestroyRef)
 
   protected readonly submitting: WritableSignal<boolean> = signal(false)
-  protected readonly forms: WritableSignal<FormGroup<FormModel>[]> = signal([createForm(this.usernameService)])
+  protected readonly forms: WritableSignal<FormGroup<FormModel>[]> = signal([createForm(this.userService)])
   protected readonly timer: WritableSignal<number> = signal(0)
   private submissionCanceled = false
 
@@ -55,7 +55,7 @@ export class FormArrayComponent {
 
   protected addForm(): void {
     if (this.forms().length < MAX_FORMS) {
-      this.forms.set([...this.forms(), createForm(this.usernameService)])
+      this.forms.set([...this.forms(), createForm(this.userService)])
     }
   }
 
@@ -64,6 +64,11 @@ export class FormArrayComponent {
       return
     }
     this.forms.set(this.forms().filter((_: FormGroup<FormModel>, i: number) => i !== index))
+  }
+
+  private resetSubmissionState(): void {
+    this.submitting.set(false)
+    this.timer.set(0)
   }
 
   protected onSubmitOrCancel(): void {
@@ -99,13 +104,19 @@ export class FormArrayComponent {
 
   private cancelSubmission(): void {
     this.submissionCanceled = true
-    this.submitting.set(false)
-    this.timer.set(0)
+    this.resetSubmissionState()
   }
 
   private finalizeSubmission(): void {
-    this.forms.set([createForm(this.usernameService)])
-    this.submitting.set(false)
-    this.timer.set(0)
+    const formValues: FormValueModel[] = this.forms().map((form: FormGroup<FormModel>) => form.getRawValue())
+    this.userService
+      .submitForms(formValues)
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        finalize(() => this.resetSubmissionState()),
+      )
+      .subscribe(() => {
+        this.forms.set([createForm(this.userService)])
+      })
   }
 }

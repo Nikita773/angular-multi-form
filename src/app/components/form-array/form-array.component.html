@@ -1,7 +1,7 @@
 <div class="container mt-5">
   <button class="btn btn-success mb-3" (click)="addForm()" [disabled]="forms().length >= 10">+ Add Form</button>
 
-  @for (form of forms(); track $index) {
+  @for (form of forms(); track form) {
     <app-form-card [form]="form" [readonly]="submitting()" (remove)="removeForm($index)"></app-form-card>
   }
 

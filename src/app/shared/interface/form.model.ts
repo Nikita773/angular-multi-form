@@ -5,3 +5,9 @@ export interface FormModel {
   username: FormControl<string>
   birthday: FormControl<string>
 }
+
+export interface FormValueModel {
+  country: string
+  username: string
+  birthday: string
+}
