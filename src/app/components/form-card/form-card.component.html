@@ -1,0 +1,65 @@
+<div [formGroup]="form()" class="card mb-3 position-relative" [class.opacity-50]="readonly()">
+  @if (!readonly()) {
+    <button
+      type="button"
+      class="btn-close position-absolute end-0 mt-2 me-2"
+      aria-label="Close"
+      (click)="remove.emit()"
+    ></button>
+  }
+  <div class="card-body">
+    <div class="mb-3 position-relative">
+      <label for="countryInput">Country</label>
+      <input
+        id="countryInput"
+        type="text"
+        class="form-control"
+        formControlName="country"
+        [appValidationMessage]="'Country'"
+        [readonly]="readonly()"
+        (input)="onCountryInput($event)"
+      />
+      @if (suggestions.length && !readonly()) {
+        <ul class="list-group position-absolute" style="z-index: 5">
+          @for (suggestion of suggestions; track suggestion) {
+            <li
+              class="list-group-item list-group-item-action"
+              tabindex="0"
+              (click)="selectCountry(suggestion)"
+              (keydown.enter)="selectCountry(suggestion)"
+              (keydown.space)="selectCountry(suggestion)"
+            >
+              {{ suggestion }}
+            </li>
+          }
+        </ul>
+      }
+    </div>
+    <div class="mb-3">
+      <label for="usernameInput">Username</label>
+      <input
+        id="usernameInput"
+        type="text"
+        class="form-control"
+        formControlName="username"
+        [appValidationMessage]="'Username'"
+        [readonly]="readonly()"
+      />
+      @if (usernamePending) {
+        <div class="form-text text-info">Checking username...</div>
+      }
+    </div>
+    <div class="mb-3">
+      <label for="birthdayInput">Birthday</label>
+      <input
+        id="birthdayInput"
+        type="date"
+        class="form-control"
+        formControlName="birthday"
+        [appValidationMessage]="'Birthday'"
+        [max]="today"
+        [readonly]="readonly()"
+      />
+    </div>
+  </div>
+</div>

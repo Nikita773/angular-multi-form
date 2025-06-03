@@ -1,0 +1,27 @@
+<div class="container mt-5">
+  <button class="btn btn-success mb-3" (click)="addForm()" [disabled]="forms().length >= 10">+ Add Form</button>
+
+  @for (form of forms(); track $index) {
+    <app-form-card [form]="form" [readonly]="submitting()" (remove)="removeForm($index)"></app-form-card>
+  }
+
+  <div class="mt-4 d-flex align-items-center">
+    <button
+      class="btn"
+      [class.btn-primary]="!submitting()"
+      [class.btn-danger]="submitting()"
+      [disabled]="!forms().length || (invalidFormsCount > 0 && !submitting())"
+      (click)="onSubmitOrCancel()"
+    >
+      {{ submitting() ? 'Cancel' : 'Submit all forms' }}
+    </button>
+
+    @if (submitting()) {
+      <span class="ms-3">Timer: {{ timer() }}</span>
+    }
+
+    @if (invalidFormsCount > 0) {
+      <span class="ms-3 text-danger">Invalid forms: {{ invalidFormsCount }}</span>
+    }
+  </div>
+</div>

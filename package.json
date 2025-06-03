@@ -1,0 +1,59 @@
+{
+  "name": "test-task-angular",
+  "version": "1.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=22 <23"
+  },
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "jest --ci --coverage",
+    "lint": "ng lint"
+  },
+  "dependencies": {
+    "@angular/animations": "18.2.13",
+    "@angular/common": "18.2.13",
+    "@angular/compiler": "18.2.13",
+    "@angular/core": "18.2.13",
+    "@angular/forms": "18.2.13",
+    "@angular/platform-browser": "18.2.13",
+    "@angular/platform-browser-dynamic": "18.2.13",
+    "@angular/router": "18.2.13",
+    "@ng-bootstrap/ng-bootstrap": "17.0.1",
+    "bootstrap": "5.3.2",
+    "rxjs": "7.8.1",
+    "tslib": "2.6.3",
+    "zone.js": "0.14.10"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "18.2.19",
+    "@angular/cli": "18.2.19",
+    "@angular/compiler-cli": "18.2.13",
+    "@angular/localize": "18.2.13",
+    "@types/jest": "29.5.14",
+    "@types/node": "22.15.17",
+    "angular-eslint": "19.7.1",
+    "eslint": "^9.28.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.31.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint-plugin-unused-imports": "^4.1.4",
+    "express": "5.1.0",
+    "jest": "29.7.0",
+    "jest-junit": "16.0.0",
+    "jest-preset-angular": "14.5.5",
+    "prettier": "^3.3.3",
+    "prettier-eslint": "^16.3.0",
+    "typescript": "5.5.4",
+    "typescript-eslint": "8.33.1"
+  },
+  "peerDependencies": {
+    "@popperjs/core": "2.11.8",
+    "globals": "14.0.0",
+    "postcss": "8.4.49"
+  }
+}
